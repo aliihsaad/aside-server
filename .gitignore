@@ -1,0 +1,24 @@
+# dependencies
+node_modules/
+
+# environment — never commit real secrets
+.env
+.env.local
+.env.*.local
+
+# logs
+*.log
+npm-debug.log*
+
+# os
+.DS_Store
+Thumbs.db
+
+# editor
+.vscode/
+.idea/
+
+# build / coverage
+dist/
+build/
+coverage/
