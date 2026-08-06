@@ -4,6 +4,7 @@ import morgan from "morgan"
 import cors from "cors";
 import connectDB from "./db/index.js"
 import indexRoutes from "./routes/index.routes.js"
+import errorHandler, { notFound } from "./middlewares/errorHandler.js";
 
 await connectDB()
 
@@ -15,6 +16,8 @@ app.use(morgan("dev"))
 app.use(express.json())
 app.use("/api", indexRoutes)
 
+app.use(notFound);
+app.use(errorHandler);
 
 const PORT = process.env.PORT || 5005;
 

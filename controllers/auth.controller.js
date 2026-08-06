@@ -36,7 +36,7 @@ export const signup = async (req, res) => {
         password: hashedPassword,
     });
 
-    res.ststus(201).json({
+    res.status(201).json({
         authToken: signToken(user),
         user: { _id: user._id, username: user.username, name: user.name },
     });

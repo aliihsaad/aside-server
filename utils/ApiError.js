@@ -1,7 +1,7 @@
 export default class ApiError extends Error {
-    constructor(status, message) {
+    constructor(statusCode, message) {
         super(message);
-        this.status = status;
+        this.statusCode = statusCode;
         this.isApiError = true;
         // trace starts at the line that actually threw instead of at this file.
         Error.captureStackTrace(this, this.constructor);
