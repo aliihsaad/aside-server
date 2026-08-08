@@ -4,7 +4,7 @@ import ApiError from "../utils/ApiError.js";
 export default function isAuth(req, res, next) {
     const header = req.headers.authorization;
     if (!header || !header.startsWith("Bearer ")) {
-        return next(ApirError.unauthorized("No token provided"));
+        return next(ApiError.unauthorized("No token provided"));
     }
 
     try {
