@@ -1,0 +1,14 @@
+import { Router } from "express";
+import isAuth from "../middlewares/isAuth.middleware.js";
+import { create, list, update, remove } from "../controllers/comment.controller.js";
+
+const router = Router();
+
+router.use(isAuth);
+
+router.post("/", create);
+router.get("/", list);
+router.put("/:id", update);
+router.delete("/:id", remove);
+
+export default router;
