@@ -1,5 +1,6 @@
 import Post from "../models/Post.model.js";
 import ApiError from "../utils/ApiError.js";
+import { resolveMentions } from "../utils/mentions.js";
 
 const AUTHOR_FIELDS = "username name avatarUrl";
 
@@ -11,9 +12,11 @@ async function create(req, res) {
     content,
     tags,
     imageUrl,
+    mentions: await resolveMentions (content),
   });
 
   await post.populate("author", AUTHOR_FIELDS);
+  await post.populate("mentions", "username name"); 
   res.status(201).json(post);
 }
 
@@ -26,6 +29,7 @@ async function list(req, res) {
 
   const posts = await Post.find(filter)
     .populate("author", AUTHOR_FIELDS)
+    .populate("mentions", "username name") 
     .sort({ createdAt: -1 })
     .limit(100);
 
@@ -33,7 +37,7 @@ async function list(req, res) {
 }
 
 async function getOne(req, res) {
-  const post = await Post.findById(req.params.id).populate("author", AUTHOR_FIELDS);
+  const post = await Post.findById(req.params.id).populate("author", AUTHOR_FIELDS).populate("mentions", "username name"); 
   if (!post) throw ApiError.notFound("Post not found");
   res.json(post);
 }
@@ -47,10 +51,11 @@ async function update(req, res) {
   }
 
   const { content, tags, imageUrl } = req.body;
-  Object.assign(post, { content, tags, imageUrl });
+  Object.assign(post, { content, tags, imageUrl, mentions: await resolveMentions(content), });
   await post.save();
 
   await post.populate("author", AUTHOR_FIELDS);
+  await post.populate("mentions", "username name"); 
   res.json(post);
 }
 
