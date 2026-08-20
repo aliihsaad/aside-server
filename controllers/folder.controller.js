@@ -44,13 +44,26 @@ async function remove(req, res) {
 
     const count = await Resource.countDocuments({ folder: folder._id });
     if (count > 0) {
-    throw ApiError.badRequest(
-      `Move or delete the ${count} resource${count === 1 ? "" : "s"} in this folder first`
-    );
-  }
+        throw ApiError.badRequest(
+            `Move or delete the ${count} resource${count === 1 ? "" : "s"} in this folder first`
+        );
+    }
 
-  await folder.deleteOne();
-  res.json({ message: "Folder deleted" });
+    await folder.deleteOne();
+    res.json({ message: "Folder deleted" });
 }
 
-export { create, listbyUser, update, remove };
+async function getOne(req, res) {
+    const folder = await Folder.findById(req.params.id).populate(
+        "owner",
+        "username name avatarUrl"
+    );
+
+    if (!folder) {
+        throw ApiError.notFound("Folder not found");
+    }
+
+    res.json(folder);
+}
+
+export { create, listbyUser, getOne, update, remove };
