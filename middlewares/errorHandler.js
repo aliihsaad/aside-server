@@ -25,6 +25,10 @@ export default function errorHandler(err, req, res, next) {
       return res.status(err.statusCode).json({ message: err.message });
     }
 
+    if (err.code === "LIMIT_FILE_SIZE") {
+      return res.status(400).json({ message: "That file is too large — 5MB maximum" });
+    }
+
     console.error("UNHANDLED:", err);
     res.status(500).json({ message: "Something went wrong on our end" });
 }
