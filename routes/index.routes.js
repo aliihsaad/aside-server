@@ -5,7 +5,8 @@ import postRoutes from "./post.routes.js";
 import postCommentRoutes from "./postComment.routes.js";
 import folderRoutes from "./folder.routes.js";
 import resourceRoutes from "./resource.routes.js";
-// import resourceCommentRoutes from "./resourceComment.routes.js";
+import uploadRoutes from "./upload.routes.js";
+import resourceCommentRoutes from "./resourceComment.routes.js";
 
 const router = Router();
 
@@ -19,7 +20,8 @@ router.use("/posts", postRoutes);
 router.use("/post-comments", postCommentRoutes);
 router.use("/folders", folderRoutes);
 router.use("/resources", resourceRoutes);
-// router.use("/resource-comments", resourceCommentRoutes);
+router.use("/upload", uploadRoutes);
+router.use("/resource-comments", resourceCommentRoutes);
 
 
 export default router;

@@ -1,14 +1,14 @@
-// import { Router } from "express";
-// import isAuth from "../middlewares/isAuth.middleware.js";
-// import { create, list, update, remove } from "../controllers/resourceComment.controller.js";
+import { Router } from "express";
+import isAuth from "../middlewares/isAuth.middleware.js";
+import { create, list, update, remove } from "../controllers/resourceComment.controller.js";
 
-// const router = Router();
+const router = Router();
 
-// router.use(isAuth);
+router.use(isAuth);
 
-// router.post("/", create);
-// router.get("/", list);
-// router.put("/:id", update);
-// router.delete("/:id", remove);
+router.post("/", create);
+router.get("/", list);
+router.put("/:id", update);
+router.delete("/:id", remove);
 
-// export default router;
+export default router;
