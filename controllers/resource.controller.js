@@ -1,6 +1,7 @@
 import Resource from "../models/Resource.model.js";
 import Folder from "../models/Folder.model.js";
 import ApiError from "../utils/ApiError.js";
+import { scoped } from "../utils/visibility.js";
 
 const OWNER_FIELDS = "username name avatarUrl";
 
@@ -38,7 +39,9 @@ async function create(req, res) {
 }
 
 async function getOne(req, res) {
-  const resource = await Resource.findById(req.params.id)
+  // 404, not 403. A 403 confirms the resource exists, which tells anyone
+  // probing ids that they found something real.
+  const resource = await Resource.findOne(scoped(req.user._id, { _id: req.params.id }))
     .populate("owner", OWNER_FIELDS)
     .populate("folder", "name colour")
     .populate({
@@ -60,7 +63,7 @@ async function list(req, res) {
   if (category) filter.category = category;
   if (tag) filter.tags = tag.toLowerCase();
 
-  const resources = await Resource.find(filter)
+  const resources = await Resource.find(scoped(req.user._id, filter))
     .populate("owner", OWNER_FIELDS)
     .sort({ createdAt: -1 })
     .limit(60);
