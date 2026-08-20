@@ -39,8 +39,6 @@ async function create(req, res) {
 }
 
 async function getOne(req, res) {
-  // 404, not 403. A 403 confirms the resource exists, which tells anyone
-  // probing ids that they found something real.
   const resource = await Resource.findOne(scoped(req.user._id, { _id: req.params.id }))
     .populate("owner", OWNER_FIELDS)
     .populate("folder", "name colour")
