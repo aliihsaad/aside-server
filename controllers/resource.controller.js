@@ -104,4 +104,55 @@ async function remove(req, res) {
   res.json({ message: "Resource deleted" });
 }
 
-export { create, getOne, list, update, remove };
+async function fork(req, res) {
+  const viewerId = req.user._id;
+  const { folder: folderId } = req.body;
+
+  const source = await Resource.findOne(scoped(viewerId, { _id: req.params.id }));
+  if(!source) throw ApiError.notFound("Resource noy found");
+  if (String(source.owner) === String(viewerId)) {
+    throw ApiError.badRequest("You can't fork your own resource");
+  }
+
+  const folder = await Folder.findOne({ _id: folderId, owner: viewerId });
+  if(!folder) throw ApiError.badRequest("Choose one of your own folders");
+
+  const copy = await Resource.create({
+    owner: viewerId,
+    folder: folder._id,
+    title: source.title,
+    description: source.description,
+    body: source.body,
+    code: source.code,
+    language: source.language,
+    category: source.category,
+    tags: [...source.tags],
+    stack: [...source.stack],
+    links: source.links.map((l) => l.toObject()),
+    previewImageUrl: source.previewImageUrl,
+    visibility: "private",
+    forkedFrom: source._id,
+  });
+
+  await Resource.updateOne({ _id: source._id }, {$inc: { forkCount: 1 } });
+  await copy.populate("owner", OWNER_FIELDS);
+  res.status(201).json(copy);
+}
+
+async function lineage(req, res) {
+  const viewerId = req.user?._id;
+
+  const root = await Resource.findOne(scoped(viewerId, { _id: req.params.id }))
+  .select("title owner forkedFrom forkCount createdAt")
+  .populate("owner", OWNER_FIELDS)
+
+  if (!root) throw ApiError.notFound("Resource not found");
+  const forks = await Resource.find(scoped(viewerId, { forkedFrom: root._id }))
+  .select("title owner forkCount createdAt")
+  .populate("owner", OWNER_FIELDS)
+  .sort({ createdAt: 1});
+
+  res.json({ root, forks });
+}
+
+export { create, getOne, list, update, remove, fork, lineage };
