@@ -7,6 +7,7 @@ import folderRoutes from "./folder.routes.js";
 import resourceRoutes from "./resource.routes.js";
 import uploadRoutes from "./upload.routes.js";
 import resourceCommentRoutes from "./resourceComment.routes.js";
+import bookmarkRoutes from "./bookmark.routes.js";
 
 const router = Router();
 
@@ -22,6 +23,7 @@ router.use("/folders", folderRoutes);
 router.use("/resources", resourceRoutes);
 router.use("/upload", uploadRoutes);
 router.use("/resource-comments", resourceCommentRoutes);
+router.use("/bookmarks", bookmarkRoutes);
 
 
 export default router;
