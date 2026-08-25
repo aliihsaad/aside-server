@@ -18,7 +18,7 @@ const upload = multer({
     limits: { fileSize: 5 * 1024 * 1024 },
     fileFilter: (req, file, cb) => {
         if (!ALLOWED.includes(file.mimetype)) {
-            return cb(ApiError.badRequest(`$(file.mimetype) files are not allowed here`));
+            return cb(ApiError.badRequest(`${file.mimetype} files are not allowed here`));
         }
         cb(null, true);
     },
