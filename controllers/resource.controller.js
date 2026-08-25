@@ -2,6 +2,8 @@ import Resource from "../models/Resource.model.js";
 import Folder from "../models/Folder.model.js";
 import ApiError from "../utils/ApiError.js";
 import { scoped } from "../utils/visibility.js";
+import ResourceComment from "../models/ResourceComment.model.js";
+import Bookmark from "../models/Bookmark.model.js";
 
 const OWNER_FIELDS = "username name avatarUrl";
 
@@ -99,6 +101,9 @@ async function remove(req, res) {
   }
 
   await Resource.updateMany({ forkedFrom: resource._id }, { forkedFrom: null });
+  // Comments and bookmarks are useless without a resource, so they go with it.  
+  await ResourceComment.deleteMany({ resource: resource._id });
+  await Bookmark.deleteMany({ resource: resource._id });  
 
   await resource.deleteOne();
   res.json({ message: "Resource deleted" });

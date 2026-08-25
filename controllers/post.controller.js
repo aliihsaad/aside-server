@@ -3,6 +3,7 @@ import ApiError from "../utils/ApiError.js";
 import { resolveMentions } from "../utils/mentions.js";
 import Resource from "../models/Resource.model.js";
 import { scoped } from "../utils/visibility.js";
+import PostComment from "../models/PostComment.model.js";
 
 const AUTHOR_FIELDS = "username name avatarUrl";
 const LINKED_RESOURCE = {
@@ -81,7 +82,8 @@ async function remove(req, res) {
   if (String(post.author) !== String(req.user._id)) {
     throw ApiError.forbidden("You can only delete your own posts");
   }
-
+  
+  await PostComment.deleteMany({ post: post._id });
   await post.deleteOne();
   res.json({ message: "Post deleted" });
 }
