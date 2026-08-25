@@ -55,17 +55,37 @@ async function getOne(req, res) {
 }
 
 async function list(req, res) {
-  const { owner, folder, category, tag } = req.query;
+  const { owner, folder, category, tag, q, sort } = req.query;
 
   const filter = {};
   if (owner) filter.owner = owner;
   if (folder) filter.folder = folder;
   if (category) filter.category = category;
-  if (tag) filter.tags = tag.toLowerCase();
 
-  const resources = await Resource.find(scoped(req.user._id, filter))
+  // The filter panel can send more than one tag: ?tag=react&tag=auth
+  // $all means the resource has to carry every tag that was ticked.
+  if (tag) {
+    const tags = Array.isArray(tag) ? tag : [tag];
+    filter.tags = { $all: tags.map((t) => t.toLowerCase()) };
+  }
+
+  const query = scoped(req.user._id, filter);
+
+  // $text has to sit at the top level, not inside the $and that scoped() builds.
+  if (q) query.$text = { $search: q };
+
+  let order = { createdAt: -1 };
+  if (sort === "forks") order = { forkCount: -1, createdAt: -1 };
+  if (sort === "saves") order = { bookmarkCount: -1, createdAt: -1 };
+  // A search with no chosen order comes back by relevance instead of by date.
+  if (q && !sort) order = { score: { $meta: "textScore" } };
+
+  const resources = await Resource.find(
+    query,
+    q ? { score: { $meta: "textScore" } } : {}
+  )
     .populate("owner", OWNER_FIELDS)
-    .sort({ createdAt: -1 })
+    .sort(order)
     .limit(60);
 
   res.json(resources);
