@@ -23,13 +23,6 @@ const linkSchema = new Schema(
     },
     label: { type: String, trim: true, maxlength: 60, default: "" },
 
-    meta: {
-      description: String,
-      language: String,
-      stars: Number,
-      pushedAt: Date,
-      fetchedAt: Date,
-    },
   },
   { _id: false }
 );
