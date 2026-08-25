@@ -2,7 +2,7 @@
 
 REST API for **Aside**, a cohort knowledge library. Node, Express 5, MongoDB, Mongoose.
 
-**Live API:** `https://<your-service>.onrender.com/api`
+**Live API:** `https://aside-server.onrender.com/api`
 **Live app:** https://aside-client.vercel.app
 **Frontend repo:** https://github.com/aliihsaad/aside-client
 
