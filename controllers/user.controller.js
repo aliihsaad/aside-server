@@ -37,6 +37,10 @@ async function list(req, res) {
 async function updateMe(req, res) {
   const { name, bio, avatarUrl, skills, socialLinks, githubUsername } = req.body;
 
+  if (githubUsername && !/^[a-zA-Z0-9-]{1,39}$/.test(githubUsername)) {
+    throw ApiError.badRequest("That doesn't look like a GitHub username");
+  }
+  
   const user = await User.findByIdAndUpdate(
     req.user._id,
     { name, bio, avatarUrl, skills, socialLinks, githubUsername },
