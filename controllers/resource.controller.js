@@ -51,7 +51,8 @@ async function getOne(req, res) {
     });
 
   if (!resource) throw ApiError.notFound("Resource not found");
-  res.json(resource);
+  const saved = await Bookmark.exists({ user: req.user._id, resource: resource._id });
+  res.json({ ...resource.toObject(), isSaved: Boolean(saved) });
 }
 
 async function list(req, res) {
